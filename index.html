@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso WiFi</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        input[type="text"] { width: 200px; padding: 10px; }
+        button { padding: 10px 20px; }
+    </style>
+</head>
+<body>
+    <h1>Acceso al WiFi del Gimnasio</h1>
+    <input type="text" id="dni" placeholder="Ingresa tu DNI">
+    <button onclick="verificarDNI()">Acceder</button>
+    <div id="resultado"></div>
+
+    <script>
+        async function obtenerDatos() {
+            const response = await fetch('https://docs.google.com/spreadsheets/d/18FahnKiswwY_4t5FqdksxcMYPZx2oPrh0I-bT4kQVqg/edit?gid=1607117498#gid=1607117498'); // Cambia esto por tu enlace de Google Sheets
+            const data = await response.json();
+            return data;
+        }
+
+        async function verificarDNI() {
+            const dniIngresado = document.getElementById('dni').value;
+            const datos = await obtenerDatos();
+            const filas = datos.values; // Cambia esto según la estructura de tus datos
+
+            let wifiInfo = '';
+            let encontrado = false;
+
+            for (const fila of filas) {
+                if (fila[2] === dniIngresado) { // Cambia el índice según tu hoja (C es 2)
+                    wifiInfo = `Nombre del WiFi: ${fila[1]}<br>Contraseña: ${fila[2]}`; // Cambia el índice según tus datos
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            const resultadoDiv = document.getElementById('resultado');
+            if (encontrado) {
+                resultadoDiv.innerHTML = wifiInfo;
+            } else {
+                resultadoDiv.innerHTML = 'DNI no encontrado. Intenta de nuevo.';
+            }
+        }
+    </script>
+</body>
+</html>
